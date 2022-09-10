@@ -7,7 +7,7 @@ There are plenty of ways to exchange assets on Solana, so why another program fo
 
 The ethos of this program is to allow anyone to create and configure their own marketplace and even provide their own custom logic on how assets should be exchanged. The motivation behind the Auction House protocol is to create a healthy ecosystem of marketplaces that focus on different use-cases, and more importantly, each bringing their own flavor into the way they allow users to trade assets.
 
-The most important aspect of the Auction House protocol is that it provides ownership of assets to the user.
+The most important aspect of the Auction House program is that it provides ownership of assets to the user.
 
 Traditionally, as soon as the user lists an asset on a marketplace, the asset is moved from the user's wallet into a wallet known as the [Escrow](https://www.investopedia.com/terms/e/escrow.asp) wallet owned by the marketplace and is kept or **escrowed** there until the asset is delisted or sold. This poses some concerns:
 * The user can not list the same asset on multiple marketplaces
@@ -23,7 +23,7 @@ The Auction House program can be used to create a new marketplace by instantiati
 
 The account can be configured in whichever way the user wants. We'll talk [more about these configurations in a dedicated page](/TODO/when-we-the-page-is-written) but here are some interesting configurable parameters:
 
-* `requireSignOff`: this allows marketplaces to gate which assets can be listed and which bids can be placed. On every relevant instruction, the Auction House [authority](https://docs.solana.com/staking/stake-accounts#understanding-account-authorities) needs to sign the transaction.8
+* `requireSignOff`: this allows marketplaces to gate which assets can be listed and which bids can be placed. On every relevant instruction, the Auction House [authority](https://docs.solana.com/staking/stake-accounts#understanding-account-authorities) needs to sign the transaction.
 * `canChangeSalePrice`: this parameter is only intended to be used on Auction Houses with `requireSignOff` set to `true`. This allows the Auction House to perform custom order matching to find the best price for the seller.
 * `sellerFeeBasisPoints`: this represents the share the marketplace takes on all trades. For instance, if this is set to `200`, i.e. 2%, then the marketplace takes 2% of every single trade that happens on their platform.
     
@@ -45,10 +45,10 @@ Similar to the case of listing, when a user places a bid, the Auction House crea
 
 > Example:
 > * Alice lists an asset A for 5 SOL. In doing so, the Auction House creates the `SellerTradeState` PDA representing the bid. The Auction House also assigns the `programAsSigner` PDA as the **Delegate**, hence giving it the **Authority** to pull the asset from Alice's wallet when the sale goes through.
-> * Bob places a bid of 3 SOL on asset A. In doing so, the marketplace pulls 3 SOL from Bob's wallet to the `BuyerEscrowAccount` PDA. This amount will stay here up until the sale goes through.
+> * Bob places a bid of 5 SOL on asset A. In doing so, the marketplace pulls 5 SOL from Bob's wallet to the `BuyerEscrowAccount` PDA. This amount will stay here up until the sale goes through.
     
 ## Executing a Sale
-Once we have a listing and a at least one bid placed for a given asset, a trade can be completed by calling the `executeSale` instruction. 
+Once we have a listing and at least one bid placed for a given asset, a trade can be completed by calling the `executeSale` instruction. 
 
 The `executeSale` instruction is a permission-less crank: in other words, can be executed by anyone without any fee or reward. On the execution of the `executeSale` instruction, two things happen:
 * The Auction House pulls the bid amount stored in the `BuyerEscrowAccount` and transfers this amount to the lister (minus Auction House fees). 
@@ -64,14 +64,14 @@ Now that we know how `executeSale` instruction works, lets discuss the three tra
 > * Bob places a bid of 3 SOL for the asset A. The Auction House creates a **Buy Order** for the asset A.
 > * Alice agrees to the offer, thus enabling the marketplace to "execute the sale" using the `executeSale` instruction.
 
-2. *"Buying" at list price*: This is the case when the bidder places a bid for an already listed asset, at the list amount itself. In such cases, the `executeSale` instruction is executed in the same transaction in which the bid is made (the **Buy Order** is made), and thus the bidder "buys" the asset.
+2. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `executeSale` instruction and the bid (**Buy Order**) is done in the same instruction, and thus the bidder "buys" the asset.
 
 > Example:
 > * Alice lists an asset A for 5 SOL, thus the Auction House creates a **Sell Order** for the asset A.
 > * Bob places a bid of 5 SOL for the asset A, creating a **Buy Order** for the asset A.
 > * This enables the marketplace to place a bid on the asset and execute the sale in the same transaction, in practice allowing Bob to "buy" asset A.
 
-3. *"Selling" at bid price*: This is the case when a user interested in an unlisted asset places a bid on it. Once this happens, if the asset owner, now interested in selling the asset, lists the asset for the bid amount, the `executeSale` instruction is executed in the same transaction in which the listing is done (the **Sell Order** is made), and thus the lister "sells" the asset.
+3. *"Selling" at bid price*: This is the case when a user interested in an unlisted asset, places a bid on it. If the asset owner now lists the asset for the bid amount, the `executeSale` instruction and the listing (**Sell Order**) is done in the same instruction, and thus the lister "sells" the asset.
 
 > Example:
 > * Bob places a bid of 5 SOL for an unlisted asset A. 
@@ -101,24 +101,24 @@ The current Auction House implementation is designed with instant sales in mind 
 
 **Auctioneer** is a customized contract type, written by the user, that uses the composability pattern of Auction House to control an individual Auction House account. 
 
-To fully enable Auctioneer to use an Auction House account's instructions, it must be explicitly delegated. 
+To enable an Auctioneer instance on an Auction House, it must first be explicitly delegated. This Auctioneer instance will then be able to intercept most of the Auction House instructions in order to inject its own custom logic. We will talk about Auctioneer in greater detail in later pages of this documentation.
 
 ![](https://i.imgur.com/RyZUfR9.png)
 
 ## Next steps
-In this page we have gone through the very basics of the Auction House protocol and the power it possesses. There is whole lot more Auction House is capable of and a lot more that can be configured to your liking.
+On this page, we have gone through the very basics of the Auction House protocol and the power it possesses. There is a lot more Auction House is capable of.
 
-To get our hands dirty with Auction House, we first need to dive a little deep into Accounts and the Instructions that are are a part of the Auction House program. Kindly go through these pages to get a good understanding of the above:
+We'll start by listing various libraries that can be used to get started with this program. Then we'll dive a little deeper into its Accounts and Instructions. This will tell us what data structures this program handles and how they are transformed.
 * [Getting Started](/TODO)
 * [Accounts](/TODO)
 * [Instructions](/TODO)
 
-If you're building your own marketplace from scratch, its important to understand one can execute the sales, cancel bids and listings, and how one can keep track of all the listings, bids and sales. This is discussed in detail in these sections:
+If you're building your own marketplace from scratch, it's important to understand how one can execute sales, cancel bids and listings, as well as keep track of all the listings, bids and sales that occurred. This is discussed in detail in these sections:
 * [Executing Sales](/TODO)
 * [Cancelling Bids and Listings](/TODO)
 * [Printing Receipts](/TODO)
 
-We briefly touched upon Auctioneer and Timed Auctions. These sections elaborate on how these can be setup and how Auctioneer adds utility and power to the already power-packed Auction House program:
+We briefly touched upon Auctioneer and Timed Auctions. These sections elaborate on how to get started with Auctioneer and explain how it adds more power to the Auction House program:
 * [Auctioneer Interface](/TODO)
 * [Auctioneer Scopes](/TODO)
 * [Auctioneer Examples (timed auctions etc.)](/TODO)
