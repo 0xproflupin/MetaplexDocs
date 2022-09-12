@@ -36,12 +36,12 @@ When a user lists an asset, the Auction House does two things:
 
 ![](https://i.imgur.com/ki27Ds8.png)
 
-2. Auction House also assigns the another PDA: `programAsSigner` PDA as the **Delegate**. Delegates are a feature of the Solana SPL-token program and are discussed in detail [here](https://spl.solana.com/token#authority-delegation). Delegation allows the Auction House to pull assets out of a token account when a sale goes through at a later point. This way, the asset need not be escrowed and can stay in the user's wallet up until the sale goes through.
+2. Auction House also assigns another PDA: `programAsSigner` PDA as the **Delegate**. Delegates are a feature of the Solana SPL-token program and are discussed in detail [here](https://spl.solana.com/token#authority-delegation). Delegation allows the Auction House to pull assets out of a token account when a sale goes through at a later point. This way, the asset need not be escrowed and can stay in the user's wallet up until the sale goes through.
 
 ![](https://i.imgur.com/aIRl7Hb.png)
 
 ### Bidding
-Similar to the case of listing, when a user places a bid, the Auction House creates a **Buy Order**, in other words, creates the `BuyerTradeState` PDA representing the bid. The bid amount (native or SPL tokens) needs to be transferred manually by the marketplace to the `BuyerEscrowAccount` PDA, which holds this amount till the sale goes through.
+Similar to the case of listing, when a user places a bid, the Auction House creates a **Buy Order**. In other words, it creates the `BuyerTradeState` PDA representing the bid. The bid amount (native or SPL tokens) needs to be transferred manually by the marketplace to the `BuyerEscrowAccount` PDA, which holds this amount till the sale goes through.
 
 > Example:
 > * Alice lists an asset A for 5 SOL. In doing so, the Auction House creates the `SellerTradeState` PDA representing the bid. The Auction House also assigns the `programAsSigner` PDA as the **Delegate**, hence giving it the **Authority** to pull the asset from Alice's wallet when the sale goes through.
@@ -55,27 +55,27 @@ The `executeSale` instruction is a permission-less crank: in other words, can be
 * The `programAsSigner` PDA, which the Auction House assigned as the **Delegate**, pulls the asset from the lister's wallet (more specifically, from the Token Account in the lister's wallet), and transfers the asset into the bidder's wallet, thus completing the trade.
 ![](https://i.imgur.com/gpAX63m.png)
 
-Now that we know how `executeSale` instruction works, lets discuss the two trade scenarios in which the `executeSale` instruction is executed in different ways:
+Now that we know how the `executeSale` instruction works, let's discuss the two trade scenarios in which the `executeSale` instruction is executed in different ways:
 
-1. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `executeSale` instruction and the bid (**Buy Order**) is done in the same instruction, and thus the bidder "buys" the asset.
+1. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `bid` and the `executeSale` instructions are executed in the same transaction, and thus the bidder effectively "buys" the asset.
 
 > Example:
-> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for the asset A.
-> * Bob notices the listing and places a bid of 5 SOL for the asset A. This creates a **Buy Order** for the asset A.
+> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for asset A.
+> * Bob notices the listing and places a bid of 5 SOL for the asset A. This creates a **Buy Order** for asset A.
 > * This enables the marketplace to place a bid on the asset and execute the sale in the same transaction, in practice allowing Bob to "buy" asset A.
 
-2. *"Selling" at bid price*: This is the case when a user interested in an unlisted asset, places a bid on it. If the asset owner now lists the asset for the bid amount, the `executeSale` instruction and the listing (**Sell Order**) is done in the same instruction, and thus the lister "sells" the asset.
+2. *"Selling" at bid price*: This is the case when a user, interested in an unlisted asset, places a bid on it. If the asset owner now lists the asset for the bid amount, the `list` and the `executeSale` instructions are executed in the same instruction, and thus the lister effectively "sells" the asset at the requested price.
 
 > Example:
-> * Bob places a bid of 5 SOL for an unlisted asset A. This creates a **Buy Order** for the asset A.
-> * Alice notices the bid and lists the asset A for 5 SOL. This creates a **Sell Order** for the asset A. 
+> * Bob places a bid of 5 SOL for an unlisted asset A. This creates a **Buy Order** for asset A.
+> * Alice notices the bid and lists the asset A for 5 SOL. This creates a **Sell Order** for asset A. 
 > * This enables the marketplace to list the asset and execute the sale in the same transaction, in practice allowing Alice to "sell" asset A.
 
 3. *Lister agreeing to a bid*: This is the case when the `executeSale` instruction is executed independently, after a **Buy Order** and a **Sell Order** exist for a given asset.
 
 > Example:
-> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for the asset A.
-> * Bob places a bid of 5 SOL for the asset A, unaware of Alice's listing. . This creates a **Buy Order** for the asset A.
+> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for asset A.
+> * Bob places a bid of 5 SOL for asset A, unaware of Alice's listing. This creates a **Buy Order** for asset A.
 > * Alice notices the matching bid and executes the sale.
  
 ## Auctioning Fungible Assets
