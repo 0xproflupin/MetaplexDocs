@@ -55,36 +55,36 @@ The `executeSale` instruction is a permission-less crank: in other words, can be
 * The `programAsSigner` PDA, which the Auction House assigned as the **Delegate**, pulls the asset from the lister's wallet (more specifically, from the Token Account in the lister's wallet), and transfers the asset into the bidder's wallet, thus completing the trade.
 ![](https://i.imgur.com/gpAX63m.png)
 
-Now that we know how `executeSale` instruction works, lets discuss the three trade scenarios in which the `executeSale` instruction is executed in different ways:
+Now that we know how `executeSale` instruction works, lets discuss the two trade scenarios in which the `executeSale` instruction is executed in different ways:
 
-1. *Lister agreeing to a bid*: This is the case when the `executeSale` instruction is executed independently, after a **Buy Order** and a **Sell Order** exist for a given asset.
-
-> Example:
-> * Alice lists an asset A for 5 SOL, thus the Auction House creates a **Sell Order** for the asset A.
-> * Bob places a bid of 3 SOL for the asset A. The Auction House creates a **Buy Order** for the asset A.
-> * Alice agrees to the offer, thus enabling the marketplace to "execute the sale" using the `executeSale` instruction.
-
-2. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `executeSale` instruction and the bid (**Buy Order**) is done in the same instruction, and thus the bidder "buys" the asset.
+1. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `executeSale` instruction and the bid (**Buy Order**) is done in the same instruction, and thus the bidder "buys" the asset.
 
 > Example:
-> * Alice lists an asset A for 5 SOL, thus the Auction House creates a **Sell Order** for the asset A.
-> * Bob places a bid of 5 SOL for the asset A, creating a **Buy Order** for the asset A.
+> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for the asset A.
+> * Bob notices the listing and places a bid of 5 SOL for the asset A. This creates a **Buy Order** for the asset A.
 > * This enables the marketplace to place a bid on the asset and execute the sale in the same transaction, in practice allowing Bob to "buy" asset A.
 
-3. *"Selling" at bid price*: This is the case when a user interested in an unlisted asset, places a bid on it. If the asset owner now lists the asset for the bid amount, the `executeSale` instruction and the listing (**Sell Order**) is done in the same instruction, and thus the lister "sells" the asset.
+2. *"Selling" at bid price*: This is the case when a user interested in an unlisted asset, places a bid on it. If the asset owner now lists the asset for the bid amount, the `executeSale` instruction and the listing (**Sell Order**) is done in the same instruction, and thus the lister "sells" the asset.
 
 > Example:
-> * Bob places a bid of 5 SOL for an unlisted asset A. 
-> * Alice notices the bid and lists the asset A for 5 SOL, creating a **Sell Order** for the asset A. 
+> * Bob places a bid of 5 SOL for an unlisted asset A. This creates a **Buy Order** for the asset A.
+> * Alice notices the bid and lists the asset A for 5 SOL. This creates a **Sell Order** for the asset A. 
 > * This enables the marketplace to list the asset and execute the sale in the same transaction, in practice allowing Alice to "sell" asset A.
-    
+
+3. *Lister agreeing to a bid*: This is the case when the `executeSale` instruction is executed independently, after a **Buy Order** and a **Sell Order** exist for a given asset.
+
+> Example:
+> * Alice lists an asset A for 5 SOL. This creates a **Sell Order** for the asset A.
+> * Bob places a bid of 5 SOL for the asset A, unaware of Alice's listing. . This creates a **Buy Order** for the asset A.
+> * Alice notices the matching bid and executes the sale.
+ 
 ## Auctioning Fungible Assets
 So far, we've talked about exchanging assets using an Auction House account, but we've not dug into what type of assets can be exchanged that way. The most popular assets that can be listed in an Auction House are [Non-Fungible Tokens (NFTs)](/resources/definitions#non-fungible-tokens).
 
 However, these are not the only assets that can benefit from the Auction House program. In fact, an asset can be any SPL Token so long as it has a Metadata account attached to its Mint account. If you'd like to know more about SPL Token and Metadata accounts, you can [read more about this in the overview of our Token Metadata program](/programs/token-metadata/overview).
     
 ## Buying asset using a custom SPL Token
-In all the examples showcased above, we use SOL as the exchange currency to discuss how the Auction House program works. But SOL is not the only currency that can be configured to be used for exchanging assets and the Auction House program allows the marketplaces to configure any SPL-token to act as the currency for exchanging assets on their platform.
+In the examples showcased above, we've used SOL as the exchange currency to discuss how the Auction House program works. But SOL is not the only currency that can be configured for exchanging assets. The Auction House program allows marketplaces to configure any SPL-token to act as their currency.
 
 This can be achieved by setting the `treasuryMint` parameter in the Auction House account to the mint account of the SPL-token of your liking.
 
@@ -96,12 +96,13 @@ During the introduction to the Auction House program, we briefly discussed how A
 When a buyer intentionally lists their asset for a price of 0 SOL / SPL-tokens, the `FreeSellerTradeState` is generated. The Auction House can then change the sale price to match a matching bid that is greater than 0. This allows the Auction House to do complicated order matching to find the best price for the seller and the marketplaces can write their own custom logic to do this order matching.
 
 ## Auctioneer
-In this page, we have discussed a lot about auctions and even went through a number of examples showcasing these auctions. But there was something common in all of these auctions: these auctions are all [**Double Auctions**](https://blogs.cornell.edu/info2040/2021/11/29/four-common-types-of-auctions/#:~:text=sealed%2Dbid%20auction.-,DOUBLE%20AUCTION,-Both%20buyers%20and): un-timed auctions where the buyers and sellers, bid and list until they find a common ground. There are several other forms of auctions such as English auctions and Dutch auctions which are Timed auctions that have become popular in the Solana ecosystem.
-The current Auction House implementation is designed with instant sales in mind and currently has no features that enable other auctions types.
+All of the auctions we've seen so far have one thing in common. They are, what we call, [**Double Auctions**](https://blogs.cornell.edu/info2040/2021/11/29/four-common-types-of-auctions/#:~:text=sealed%2Dbid%20auction.-,DOUBLE%20AUCTION,-Both%20buyers%20and). That is, they are un-timed auctions where buyers and sellers, bid and list until they find a common ground.
+However, there are several other forms of auctions such as English auctions and Dutch auctions which have become popular in the Solana ecosystem.
+The Auction House implementation is purposefully designed with instant sales in mind and does not offer other auction types out-of-the-box.
 
-**Auctioneer** is a customized contract type, written by the user, that uses the composability pattern of Auction House to control an individual Auction House account. 
+**Auctioneer** is a customized contract type, written by the user, that uses the composability pattern of Auction House to control an individual Auction House account.
 
-To enable an Auctioneer instance on an Auction House, it must first be explicitly delegated. This Auctioneer instance will then be able to intercept most of the Auction House instructions in order to inject its own custom logic. We will talk about Auctioneer in greater detail in later pages of this documentation.
+To enable an Auctioneer instance on an Auction House, it must first be explicitly delegated. This Auctioneer instance will then be able to intercept most of the Auction House instructions in order to inject its own custom logic. Metaplex also provides some Auctioneer implementations like Timed Auctions. We will talk about this in greater detail in later pages of this documentation.
 
 ![](https://i.imgur.com/RyZUfR9.png)
 
