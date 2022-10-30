@@ -55,7 +55,7 @@ The `executeSale` instruction is a permission-less crank: in other words, can be
 * The `programAsSigner` PDA, which the Auction House assigned as the **Delegate**, pulls the asset from the lister's wallet (more specifically, from the Token Account in the lister's wallet), and transfers the asset into the bidder's wallet, thus completing the trade.
 ![](https://i.imgur.com/gpAX63m.png)
 
-Now that we know how the `executeSale` instruction works, let's discuss the two trade scenarios in which the `executeSale` instruction is executed in different ways:
+Now that we know how the `executeSale` instruction works, let's discuss the three trade scenarios in which the `executeSale` instruction is executed in different ways:
 
 1. *"Buying" at list price*: This is the case when a user places a bid for a listed asset, at the listed amount itself. In such cases, the `bid` and the `executeSale` instructions are executed in the same transaction, and thus the bidder effectively "buys" the asset.
 
