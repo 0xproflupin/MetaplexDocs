@@ -4,6 +4,10 @@
 
 In the previous page we saw how to make receipts for bids, listings and sales. These receipts make it easier for the marketplace operators to keep track of these actions. But how does one fetch these bids, listings and sales?
 
+<Accordion>
+<AccordionItem title="JS SDK" open={true}>
+<div className="accordion-item-padding">
+
 There are three types of functions provided for fetching bids, listings and sales:
 
 1. **Find all in an auction house**: using this type of function, all bids / listings / sales can be found for a given Auction House.
@@ -12,9 +16,11 @@ There are three types of functions provided for fetching bids, listings and sale
 
 3. **Find by trade state**: We talked about [Trade States in the overview page](#TODO). Trade state PDA accounts encoding the bid / listing / sale orders can also be used to find the corresponding action.
 
-Let us look at code snippets of each of these function types. 
+</div>
+</AccordionItem>
+</Accordion>
 
-## Find All in an Auction House
+### Find All in an Auction House
 
 <Accordion>
 <AccordionItem title="JS SDK" open={true}>
@@ -83,7 +89,7 @@ const purchases = await metaplex
 </AccordionItem>
 </Accordion>
 
-## Find by Receipt
+### Find by Receipt
 
 <Accordion>
 <AccordionItem title="JS SDK" open={true}>
@@ -112,7 +118,7 @@ const nft = await metaplex
 </AccordionItem>
 </Accordion>
 
-## Find by Trade State
+### Find by Trade State
 
 <Accordion>
 <AccordionItem title="JS SDK" open={true}>

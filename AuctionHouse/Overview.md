@@ -1,4 +1,4 @@
-# Auction House: Overview
+# Overview
 
 ## Introduction
 Auction House is a program that allows users to exchange assets within the Solana blockchain. 
@@ -107,22 +107,22 @@ To enable an Auctioneer instance on an Auction House, it must first be explicitl
 ![](https://i.imgur.com/RyZUfR9.png)
 
 ## Next steps
-On this page, we have gone through the very basics of the Auction House protocol and the power it possesses. There is a lot more Auction House is capable of.
+On this page, we have gone through the very basics of the Auction House protocol and the power it possesses. There is a lot more that the Auction House is capable of.
 
-We'll start by listing various libraries that can be used to get started with this program. Then we'll dive a little deeper into its Accounts and Instructions. This will tell us what data structures this program handles and how they are transformed.
+We'll start by listing various libraries that can be used to get started with this program:
 * [Getting Started](/TODO)
-* [Accounts](/TODO)
-* [Instructions](/TODO)
 
-If you're building your own marketplace from scratch, it's important to understand how one can execute sales, cancel bids and listings, as well as keep track of all the listings, bids and sales that occurred. This is discussed in detail in these sections:
-* [Executing Sales](/TODO)
-* [Cancelling Bids and Listings](/TODO)
+We will proceed to dive deeper into the Auction House settings and how to manage Auction House instances:
+* [Auction House Settings](/TODO)
+* [Managing Auction Houses](/TODO)
+
+Once we understand the basics of Auction House, we can begin to learn how to trade assets on Auction House powered marketplaces:
+* [Trading assets on Auction House](/TODO)
+* [Managing Buyer Account](/TODO)
+
+We will also explore how to track listings, bids and sales on Auction Houses and how to fetch them:
 * [Printing Receipts](/TODO)
-
-We briefly touched upon Auctioneer and Timed Auctions. These sections elaborate on how to get started with Auctioneer and explain how it adds more power to the Auction House program:
-* [Auctioneer Interface](/TODO)
-* [Auctioneer Scopes](/TODO)
-* [Auctioneer Examples (timed auctions etc.)](/TODO)
+* [Finding bids, listings and purchases](/TODO)
     
 ## Additional Reading Material
 * Prof Lupin's Auction House guide: https://proflupin.xyz/metaplex-auction-house

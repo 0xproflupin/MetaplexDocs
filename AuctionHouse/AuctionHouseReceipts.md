@@ -4,27 +4,27 @@
 
 To aid transaction / activity tracking on marketplaces, the Auction House program supports the generation of receipts for listings, bids and sales.
 
-In addition to printing receipts, Auction House automatically cancels receipts when the corresponding instruction (bid, listing or sale) is cancelled.
+In addition to printing receipts, Auction House cancels receipts when the corresponding instruction (bid, listing or sale) is cancelled.
 
 Let us see how receipts are printed.
 
 ## Printing Receipts
 
-Receipts can be printed for the three main trade actions on an Auction House. Here are these actions with corresponding JS SDK functions we have gone through:
+To generate these receipts, the receipt printing function should be called immediately after the corresponding transaction (`PrintListingReceipt`, `PrintBidReceipt`, and `PrintPurchaseReceipt`).
 
-1. Listing: `createListing()`
-2. Bidding: `createBid()`
-3. Executing a Sale: `buy()`, `sell()`, `executeSale()`
+Additionally, the `CancelListingReceipt `and `CancelBidReceipt` instructions should be called in the case of canceled listings and bids. Calling these two instructions will fill the `canceled_at` fields of the `ListingReceipt` and `BidReceipt` accounts.
 
-In each of the above functions, a receipt can be printed which holds important information about the underlying transaction. There are two fields that can be introduced to each function above to print the corresponding receipt:
-
-1. `printReceipt`: This is a boolean field that defaults to `true`. When this field is set to `true`, a receipt is printed for the corresponding function.
-
-2. `bookkeeper`: The address of the bookkeeper wallet responsible for the receipt. In other words, the bookeeper is the wallet that paid for the receipt. It's only responsibility at this time is tracking the payer of the receipt so that in the future if the account is allowed to be closed the program knows who should be refunded for the rent. This field defaults to `metaplex.identity()`.
+> While the receipts can be retrieved using the standard getProgramAccounts data flow, the official recommendation is to use Solana's AccountsDB plug-in to index and track the generated receipts.
 
 <Accordion>
 <AccordionItem title="JS SDK" open={true}>
 <div className="accordion-item-padding">
+
+There are two fields that can be introduced to each function above to print the corresponding receipt:
+
+1. `printReceipt`: This is a boolean field that defaults to `true`. When this field is set to `true`, a receipt is printed for the corresponding function.
+
+2. `bookkeeper`: The address of the bookkeeper wallet responsible for the receipt. In other words, the bookeeper is the wallet that paid for the receipt. It's only responsibility at this time is tracking the payer of the receipt so that in the future if the account is allowed to be closed the program knows who should be refunded for the rent. This field defaults to `metaplex.identity()`.
 
 Here's an example of printing receipts for bid, list and execute sale instructions.
      

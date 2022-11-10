@@ -70,7 +70,7 @@ const auctionHouseSettings = {
 
 There are several accounts that are necessary for the Auction House to function properly. Once set by the Auction House, the authority can reset and configure these accounts as per their liking.
 
-There are some accounts that are created and controlled by the Auction House program. These accounts are Program Derived Addresses (PDAs) which you can read more about [here](https://solanacookbook.com/core-concepts/pdas.html). While updating the settings, these accounts can be reset to any other account and not necessarily PDAs. Here are the two settings that can be used to make changes to the Auction House generated helper accounts:
+There are some accounts that are created and controlled by the Auction House program. These accounts are Program Derived Addresses (PDAs) which you can read more about [here](https://solanacookbook.com/core-concepts/pdas.html). These are the two settings that can be used to set these accounts:
 
 1. `auctionHouseFeeAccount`: The public key of the fee account which stores funds for paying for Auction House related transactions on behalf of the users. 
 
@@ -86,20 +86,20 @@ There are other accounts that are not created by the Auction House program, but 
 <AccordionItem title="JS SDK" open={true}>
 <div className="accordion-item-padding">
     
-The following code snippet builds four different keypairs, corresponding to the four accounts discussed above and updates them.
+The following code snippet builds four different keypairs, corresponding to the four accounts discussed above and sets them.
 
 ```tsx
 import { Keypair } from "@solana/web3.js";
 
-const newFeeAccount = Keypair.generate();
-const newTreasuryAccount = Keypair.generate();
-const newFeeWithdrawalDestination = Keypair.generate();
-const newTreasuryWithdrawalDestination = Keypair.generate();
+const feeAccount = Keypair.generate();
+const treasuryAccount = Keypair.generate();
+const feeWithdrawalDestination = Keypair.generate();
+const treasuryWithdrawalDestination = Keypair.generate();
 const auctionHouseSettings = {
-    auctionHouseFeeAccount: newFeeAccount,
-    auctionHouseTreasury: newTreasuryAccount,
-    feeWithdrawalDestination: newFeeWithdrawalDestination,
-    treasuryWithdrawalDestination: newTreasuryWithdrawalDestination,
+    auctionHouseFeeAccount: feeAccount,
+    auctionHouseTreasury: treasuryAccount,
+    feeWithdrawalDestination: feeWithdrawalDestination,
+    treasuryWithdrawalDestination: treasuryWithdrawalDestination,
 };
 ```
 
